@@ -56,7 +56,6 @@
       overflow: hidden;
     }
 
-    /* 상단 네온 라인 */
     .container::before {
       content: "";
       position: absolute;
@@ -67,7 +66,6 @@
       background: linear-gradient(90deg, var(--accent-cyan), var(--accent-orange));
     }
 
-    /* 박빙 배너 */
     .close-banner {
       display: none;
       background: linear-gradient(135deg, rgba(220, 38, 38, 0.92), rgba(234, 88, 12, 0.92));
@@ -100,7 +98,6 @@
       50% { transform: scale(1.012); }
     }
 
-    /* 헤더 */
     .header-tag {
       font-family: 'Rajdhani', sans-serif;
       font-size: 12px;
@@ -136,7 +133,6 @@
       font-weight: 700;
     }
 
-    /* 타이머 HUD */
     .timer-box {
       background: rgba(0, 240, 255, 0.06);
       border: 1px solid rgba(0, 240, 255, 0.25);
@@ -156,7 +152,6 @@
       color: #f87171;
     }
 
-    /* 단계 카드 공통 */
     .step-card {
       background: var(--panel-bg);
       border: 1px solid var(--border-subtle);
@@ -200,7 +195,6 @@
       font-weight: 700;
     }
 
-    /* 입력창 */
     .input-wrap {
       position: relative;
     }
@@ -243,7 +237,6 @@
     .valid { color: #4ade80; }
     .invalid { color: #f87171; }
 
-    /* 투표 버튼 */
     .submit-btn {
       width: 100%;
       padding: 15px;
@@ -275,7 +268,6 @@
       cursor: not-allowed;
     }
 
-    /* 결과 메시지 */
     .msg-box {
       margin-top: 14px;
       padding: 12px 14px;
@@ -299,7 +291,6 @@
       border: 1px solid rgba(248, 113, 113, 0.4);
     }
 
-    /* 실시간 TOP 5 영역 */
     .ranking-box {
       margin-top: 26px;
       border-top: 1px solid var(--border-subtle);
@@ -436,7 +427,7 @@
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyuMMeGNh0u09OM5ndTwSRoEZ2AUKHp1Etj5zYsWYJq-0NuJmfP1byekfoBUrziAsQqfw/exec";
     const CLIENT_ID = "518414285526-7tevtv01jo5cj6buoqavpjlfkva1a62k.apps.googleusercontent.com";
 
-    let deadlineMs = new Date("2026-11-28T05:00:00+09:00").getTime();
+    let deadlineMs = new Date("2026-11-29T05:00:00+09:00").getTime();
     let googleIdToken = null;
     let dictMap = new Map();
     let isClosed = false;
@@ -445,7 +436,7 @@
       isClosed = true;
       const timerBox = document.getElementById("timerBox");
       timerBox.className = "timer-box ended";
-      timerBox.textContent = "⛔ 투표가 마감되었습니다 (11/28 토요일 새벽 04:59 종료)";
+      timerBox.textContent = "⛔ 투표가 마감되었습니다 (11/29 일요일 새벽 04:59 종료)";
 
       const input = document.getElementById("galljuInput");
       input.disabled = true;
@@ -471,7 +462,7 @@
       const secs = Math.floor((diff / 1000) % 60);
 
       document.getElementById("timerBox").textContent =
-        `⏳ 11/28(토) 04:59 마감까지 ${days}일 ${hours}시간 ${mins}분 ${secs}초 남음`;
+        `⏳ 11/29(일) 04:59 마감까지 ${days}일 ${hours}시간 ${mins}분 ${secs}초 남음`;
     }
 
     function handleCredentialResponse(response) {
