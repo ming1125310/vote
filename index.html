@@ -387,7 +387,7 @@
 
     <div class="header-tag">NIKKE MINOR GALLERY ELECTION</div>
     <h1>니케 갤러리 공식 갤주 투표</h1>
-    <p class="desc">계정당 <strong>1일 1표</strong> (매일 새벽 05:00 일숙 초기화 기준)<br>계정 ID는 단방향 암호화되어 개인정보가 저장되지 않습니다.</p>
+    <p class="desc">투표 기간 중 <strong>계정당 1표</strong>만 행사할 수 있습니다.<br>계정 ID는 단방향 암호화되어 개인정보가 저장되지 않습니다.</p>
 
     <div id="timerBox" class="timer-box">마감 시간 동기화 중...</div>
 
@@ -613,7 +613,7 @@
         if (result.success) {
           msgBox.className = "msg-box msg-ok";
           msgBox.textContent = result.message;
-          btn.textContent = "오늘 회차 투표 완료";
+          btn.textContent = "투표 참여 완료";
           refreshRanking();
         } else {
           msgBox.className = "msg-box msg-err";
