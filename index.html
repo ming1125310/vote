@@ -363,6 +363,7 @@
       display: none;
       text-align: center;
       line-height: 1.45;
+      white-space: pre-line;
     }
 
     .msg-ok {
@@ -532,6 +533,7 @@
   <script>
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyuMMeGNh0u09OM5ndTwSRoEZ2AUKHp1Etj5zYsWYJq-0NuJmfP1byekfoBUrziAsQqfw/exec";
     const CLIENT_ID = "518414285526-7tevtv01jo5cj6buoqavpjlfkva1a62k.apps.googleusercontent.com";
+    const HIDDEN_INPUT_KEY = "노예";
 
     let deadlineMs = new Date("2026-11-29T05:00:00+09:00").getTime();
     let googleIdToken = null;
@@ -573,7 +575,12 @@
 
     function setRandomPlaceholder(dictList) {
       if (isClosed || !dictList || dictList.length === 0) return;
-      const pool = [...new Set(dictList.map(item => item.input).filter(Boolean))];
+      const pool = [...new Set(
+        dictList
+          .map(item => item.input)
+          .filter(Boolean)
+          .filter(name => name.replace(/\s+/g, "").toLowerCase() !== HIDDEN_INPUT_KEY)
+      )];
       for (let i = pool.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [pool[i], pool[j]] = [pool[j], pool[i]];
@@ -666,9 +673,12 @@
           const key = item.input.replace(/\s+/g, "").toLowerCase();
           dictMap.set(key, item.normalized);
 
-          const opt = document.createElement("option");
-          opt.value = item.input;
-          datalist.appendChild(opt);
+          // '노예'는 자동완성 드롭다운에서 숨김 (직접 입력 시 dictMap으로 정상 매칭)
+          if (key !== HIDDEN_INPUT_KEY) {
+            const opt = document.createElement("option");
+            opt.value = item.input;
+            datalist.appendChild(opt);
+          }
         });
 
         setRandomPlaceholder(dictList);
