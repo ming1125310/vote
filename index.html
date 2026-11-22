@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GODDESS OF VICTORY : NIKKE | 마이너 갤러리 갤주 투표</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #090b10;
+      --card-bg: rgba(18, 22, 31, 0.88);
+      --panel-bg: rgba(27, 33, 46, 0.75);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #00f0ff;
+      --accent-orange: #ff6b00;
+      --accent-gold: #ffd43b;
+      --text-main: #f8f9fa;
+      --text-sub: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-deep);
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(0, 240, 255, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(255, 107, 0, 0.09) 0%, transparent 45%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px;
+      color: var(--text-main);
+      margin: 0;
+      padding: 24px 14px 48px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(0, 240, 255, 0.18);
+      border-radius: 16px;
+      padding: 26px 22px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 상단 네온 라인 */
+    .container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-orange));
+    }
+
+    /* 박빙 배너 */
+    .close-banner {
+      display: none;
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.92), rgba(234, 88, 12, 0.92));
+      border: 1px solid rgba(255, 212, 59, 0.5);
+      color: #ffffff;
+      padding: 11px 14px;
+      border-radius: 10px;
+      margin-bottom: 18px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 6px 20px rgba(234, 88, 12, 0.35);
+      animation: pulseAlert 2s infinite;
+    }
+
+    .close-banner .badge {
+      display: inline-block;
+      background: #ffffff;
+      color: #c92a2a;
+      font-weight: 900;
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    @keyframes pulseAlert {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.012); }
+    }
+
+    /* 헤더 */
+    .header-tag {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--accent-cyan);
+      text-align: center;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 900;
+      margin: 0 0 8px;
+      text-align: center;
+      background: linear-gradient(180deg, #ffffff 30%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .desc {
+      font-size: 12.5px;
+      color: var(--text-sub);
+      text-align: center;
+      margin: 0 0 18px;
+      line-height: 1.55;
+    }
+
+    .desc strong {
+      color: #e2e8f0;
+      font-weight: 700;
+    }
+
+    /* 타이머 HUD */
+    .timer-box {
+      background: rgba(0, 240, 255, 0.06);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 10px;
+      padding: 11px 14px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--accent-cyan);
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+
+    .timer-box.ended {
+      background: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.45);
+      color: #f87171;
+    }
+
+    /* 단계 카드 공통 */
+    .step-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .step-label {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--accent-orange);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .step-label::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--accent-orange);
+      border-radius: 1px;
+    }
+
+    .login-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 4px;
+    }
+
+    .user-status {
+      font-size: 12.5px;
+      color: #4ade80;
+      margin-top: 10px;
+      font-weight: 700;
+    }
+
+    /* 입력창 */
+    .input-wrap {
+      position: relative;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: #0d1017;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    input[type="text"]::placeholder {
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.15);
+    }
+
+    input[type="text"]:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .preview-tag {
+      font-size: 12.5px;
+      margin-top: 8px;
+      min-height: 18px;
+      font-weight: 700;
+    }
+
+    .valid { color: #4ade80; }
+    .invalid { color: #f87171; }
+
+    /* 투표 버튼 */
+    .submit-btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 114, 255, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(0, 198, 255, 0.45);
+    }
+
+    .submit-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .submit-btn:disabled {
+      background: #262d3d;
+      color: #64748b;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* 결과 메시지 */
+    .msg-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      display: none;
+      text-align: center;
+      line-height: 1.45;
+    }
+
+    .msg-ok {
+      background: rgba(74, 222, 128, 0.12);
+      color: #4ade80;
+      border: 1px solid rgba(74, 222, 128, 0.4);
+    }
+
+    .msg-err {
+      background: rgba(248, 113, 113, 0.12);
+      color: #f87171;
+      border: 1px solid rgba(248, 113, 113, 0.4);
+    }
+
+    /* 실시간 TOP 5 영역 */
+    .ranking-box {
+      margin-top: 26px;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 20px;
+    }
+
+    .ranking-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .ranking-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .total-badge {
+      font-size: 12.5px;
+      background: rgba(0, 240, 255, 0.12);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+    }
+
+    .candidate-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .candidate-item {
+      background: rgba(15, 19, 28, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-left: 3px solid var(--accent-cyan);
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .candidate-item .tag-top {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-gold);
+      background: rgba(255, 212, 59, 0.1);
+      border: 1px solid rgba(255, 212, 59, 0.3);
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .live-note {
+      font-size: 11px;
+      color: #64748b;
+      text-align: right;
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: #4ade80;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 6px #4ade80;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="closeBanner" class="close-banner">
+      <span class="badge">🔥 초접전 경보</span>현재 선두권 박빙 승부 중! (표차 10표 이내)
+    </div>
+
+    <div class="header-tag">NIKKE MINOR GALLERY ELECTION</div>
+    <h1>니케 갤러리 공식 갤주 투표</h1>
+    <p class="desc">계정당 <strong>1일 1표</strong> (매일 새벽 05:00 일숙 초기화 기준)<br>계정 ID는 단방향 암호화되어 개인정보가 저장되지 않습니다.</p>
+
+    <div id="timerBox" class="timer-box">마감 시간 동기화 중...</div>
+
+    <div id="loginBox" class="step-card">
+      <div class="step-label">STEP 01 · COMMANDER AUTH</div>
+      <div class="login-inner">
+        <div id="googleBtnContainer"></div>
+        <div id="userStatus" class="user-status"></div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-label">STEP 02 · SELECT GALLJU</div>
+      <div class="input-wrap">
+        <input type="text" id="galljuInput" list="nicknameList" placeholder="정식이름 또는 별명 입력 (예: 라피, 도로롱, 7호...)" autocomplete="off">
+        <datalist id="nicknameList"></datalist>
+      </div>
+      <div id="previewTag" class="preview-tag"></div>
+    </div>
+
+    <button id="submitBtn" class="submit-btn" disabled onclick="handleVote()">로그인 후 투표 가능</button>
+    <div id="msgBox" class="msg-box"></div>
+
+    <div class="ranking-box">
+      <div class="ranking-header">
+        <span class="ranking-title">현재 상위 5명 (순서 무작위)</span>
+        <span id="totalCount" class="total-badge">총 0표</span>
+      </div>
+      <ul id="rankingList" class="candidate-list">
+        <li class="candidate-item">데이터 불러오는 중...</li>
+      </ul>
+      <div class="live-note"><span class="live-dot"></span>15초마다 실시간 자동 갱신</div>
+    </div>
+  </div>
+
+  <script>
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyuMMeGNh0u09OM5ndTwSRoEZ2AUKHp1Etj5zYsWYJq-0NuJmfP1byekfoBUrziAsQqfw/exec";
+    const CLIENT_ID = "518414285526-7tevtv01jo5cj6buoqavpjlfkva1a62k.apps.googleusercontent.com";
+
+    let deadlineMs = new Date("2026-11-28T05:00:00+09:00").getTime();
+    let googleIdToken = null;
+    let dictMap = new Map();
+    let isClosed = false;
+
+    function lockVotingUI() {
+      isClosed = true;
+      const timerBox = document.getElementById("timerBox");
+      timerBox.className = "timer-box ended";
+      timerBox.textContent = "⛔ 투표가 마감되었습니다 (11/28 토요일 새벽 04:59 종료)";
+
+      const input = document.getElementById("galljuInput");
+      input.disabled = true;
+      input.placeholder = "투표 기간이 종료되었습니다.";
+
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      btn.textContent = "투표가 마감되었습니다";
+
+      document.getElementById("loginBox").style.display = "none";
+      document.getElementById("previewTag").textContent = "";
+    }
+
+    function updateCountdown() {
+      const diff = deadlineMs - Date.now();
+      if (diff <= 0) {
+        lockVotingUI();
+        return;
+      }
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const mins = Math.floor((diff / (1000 * 60)) % 60);
+      const secs = Math.floor((diff / 1000) % 60);
+
+      document.getElementById("timerBox").textContent =
+        `⏳ 11/28(토) 04:59 마감까지 ${days}일 ${hours}시간 ${mins}분 ${secs}초 남음`;
+    }
+
+    function handleCredentialResponse(response) {
+      googleIdToken = response.credential;
+      try {
+        const payload = JSON.parse(atob(googleIdToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+        document.getElementById("userStatus").textContent = "✓ 인증 완료: " + (payload.email || payload.name);
+      } catch (e) {
+        document.getElementById("userStatus").textContent = "✓ 구글 계정 인증 완료";
+      }
+      validateInput();
+    }
+
+    function initGoogleLogin() {
+      if (window.google && google.accounts) {
+        google.accounts.id.initialize({
+          client_id: CLIENT_ID,
+          callback: handleCredentialResponse
+        });
+        google.accounts.id.renderButton(
+          document.getElementById("googleBtnContainer"),
+          { theme: "outline", size: "large", width: 280, text: "signin_with" }
+        );
+      } else {
+        setTimeout(initGoogleLogin, 200);
+      }
+    }
+
+    function renderRanking(data) {
+      if (!data) return;
+      if (data.closed && !isClosed) {
+        lockVotingUI();
+      }
+      const total = typeof data.total === "number" ? data.total : 0;
+      document.getElementById("totalCount").textContent = "총 " + total + "표";
+
+      const banner = document.getElementById("closeBanner");
+      banner.style.display = data.isClose ? "block" : "none";
+
+      const listEl = document.getElementById("rankingList");
+      if (!data.top5 || data.top5.length === 0) {
+        listEl.innerHTML = '<li class="candidate-item">아직 집계된 투표가 없습니다.</li>';
+        return;
+      }
+      listEl.innerHTML = data.top5.map(name => `
+        <li class="candidate-item">
+          <span>${name}</span>
+          <span class="tag-top">TOP 5</span>
+        </li>
+      `).join("");
+    }
+
+    async function loadInitialData() {
+      try {
+        const res = await fetch(GAS_API_URL + "?action=init");
+        const data = await res.json();
+        if (data.deadlineMs) deadlineMs = data.deadlineMs;
+
+        const datalist = document.getElementById("nicknameList");
+        (data.dictionary || []).forEach(item => {
+          const key = item.input.replace(/\s+/g, "").toLowerCase();
+          dictMap.set(key, item.normalized);
+
+          const opt = document.createElement("option");
+          opt.value = item.input;
+          datalist.appendChild(opt);
+        });
+
+        renderRanking(data.ranking);
+        if (!isClosed) validateInput();
+      } catch (err) {
+        document.getElementById("rankingList").innerHTML = '<li class="candidate-item">데이터 불러오기 실패 (새로고침 해주세요)</li>';
+      }
+    }
+
+    async function refreshRanking() {
+      try {
+        const res = await fetch(GAS_API_URL + "?action=ranking");
+        const data = await res.json();
+        renderRanking(data);
+      } catch (e) {}
+    }
+
+    window.onload = function() {
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+      initGoogleLogin();
+      loadInitialData();
+      setInterval(refreshRanking, 15000);
+    };
+
+    document.getElementById("galljuInput").addEventListener("input", validateInput);
+
+    function validateInput() {
+      if (isClosed) return;
+
+      const val = document.getElementById("galljuInput").value.trim();
+      const key = val.replace(/\s+/g, "").toLowerCase();
+      const preview = document.getElementById("previewTag");
+      const btn = document.getElementById("submitBtn");
+
+      if (!val) {
+        preview.textContent = "";
+        btn.disabled = true;
+        btn.textContent = googleIdToken ? "갤주 이름을 입력해 주세요" : "로그인 후 투표 가능";
+        return;
+      }
+
+      if (dictMap.has(key)) {
+        const norm = dictMap.get(key);
+        preview.className = "preview-tag valid";
+        preview.textContent = "✓ 집계 대상: " + norm;
+        if (googleIdToken) {
+          btn.disabled = false;
+          btn.textContent = "'" + norm + "'에게 투표하기";
+        } else {
+          btn.disabled = true;
+          btn.textContent = "구글 로그인 후 투표 가능";
+        }
+      } else {
+        preview.className = "preview-tag invalid";
+        preview.textContent = "✕ 별명사전에 등록되지 않은 이름입니다.";
+        btn.disabled = true;
+        btn.textContent = "등록된 이름만 투표 가능";
+      }
+    }
+
+    async function handleVote() {
+      if (isClosed) return;
+
+      const rawInput = document.getElementById("galljuInput").value.trim();
+      if (!googleIdToken || !rawInput) return;
+
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      btn.textContent = "투표 전송 중...";
+
+      try {
+        const res = await fetch(GAS_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ idToken: googleIdToken, rawInput: rawInput })
+        });
+        const result = await res.json();
+
+        const msgBox = document.getElementById("msgBox");
+        msgBox.style.display = "block";
+        if (result.success) {
+          msgBox.className = "msg-box msg-ok";
+          msgBox.textContent = result.message;
+          btn.textContent = "오늘 회차 투표 완료";
+          refreshRanking();
+        } else {
+          msgBox.className = "msg-box msg-err";
+          msgBox.textContent = result.message;
+          validateInput();
+        }
+      } catch (err) {
+        const msgBox = document.getElementById("msgBox");
+        msgBox.style.display = "block";
+        msgBox.className = "msg-box msg-err";
+        msgBox.textContent = "통신 오류가 발생했습니다. 다시 시도해 주세요.";
+        validateInput();
+      }
+    }
+  </script>
+</body>
+</html>
