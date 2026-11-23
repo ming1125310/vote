@@ -262,6 +262,19 @@
       word-break: break-all;
     }
 
+    .voted-status-badge {
+      display: none;
+      width: 100%;
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      color: var(--accent-cyan);
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+
     .logout-btn {
       background: rgba(255, 255, 255, 0.08);
       color: #e2e8f0;
@@ -338,9 +351,18 @@
       transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s;
     }
 
+    .submit-btn.change-mode {
+      background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+      box-shadow: 0 8px 20px rgba(234, 88, 12, 0.35);
+    }
+
     .submit-btn:hover:not(:disabled) {
       transform: translateY(-1px);
       box-shadow: 0 10px 24px rgba(0, 198, 255, 0.45);
+    }
+
+    .submit-btn.change-mode:hover:not(:disabled) {
+      box-shadow: 0 10px 24px rgba(245, 158, 11, 0.45);
     }
 
     .submit-btn:active:not(:disabled) {
@@ -474,7 +496,7 @@
 
     <div class="header-tag">NIKKE MINOR GALLERY ELECTION</div>
     <h1>니케 갤러리 공식 갤주 투표</h1>
-    <p class="desc">투표 기간 중 <strong>계정당 1표</strong>만 행사할 수 있습니다.<br>계정 ID는 단방향 암호화되어 개인정보가 저장되지 않습니다.</p>
+    <p class="desc">투표 기간 중 <strong>계정당 1표</strong>만 행사할 수 있으며, <strong>마감 전까지 투표 변경이 가능</strong>합니다.<br>계정 ID는 단방향 암호화되어 개인정보가 저장되지 않습니다.</p>
 
     <div id="timerBox" class="timer-box">마감 시간 동기화 중...</div>
 
@@ -503,6 +525,8 @@
           </div>
           <button type="button" class="logout-btn" onclick="handleLogout()">로그아웃</button>
         </div>
+
+        <div id="votedStatusBadge" class="voted-status-badge"></div>
       </div>
     </div>
 
@@ -539,6 +563,7 @@
     let googleIdToken = null;
     let dictMap = new Map();
     let isClosed = false;
+    let existingVoteName = null;
 
     function lockVotingUI() {
       isClosed = true;
@@ -592,8 +617,39 @@
       }
     }
 
+    function updateVotedBadge() {
+      const badge = document.getElementById("votedStatusBadge");
+      if (googleIdToken && existingVoteName) {
+        badge.style.display = "block";
+        badge.textContent = `✓ 현재 투표 완료: '${existingVoteName}' (새 캐릭터 입력 시 변경 가능)`;
+      } else {
+        badge.style.display = "none";
+        badge.textContent = "";
+      }
+    }
+
+    async function checkExistingVote() {
+      if (!googleIdToken) return;
+      try {
+        const res = await fetch(GAS_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "checkStatus", idToken: googleIdToken })
+        });
+        const data = await res.json();
+        if (data.success && data.hasVoted) {
+          existingVoteName = data.currentVote;
+        } else {
+          existingVoteName = null;
+        }
+        updateVotedBadge();
+        validateInput();
+      } catch (e) {}
+    }
+
     function handleCredentialResponse(response) {
       googleIdToken = response.credential;
+      existingVoteName = null;
       let accountLabel = "구글 계정 인증됨";
       try {
         const payload = JSON.parse(atob(googleIdToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
@@ -603,14 +659,18 @@
       document.getElementById("currentUserId").textContent = accountLabel;
       document.getElementById("loggedOutArea").style.display = "none";
       document.getElementById("loggedInPanel").style.display = "flex";
+      updateVotedBadge();
       validateInput();
+      checkExistingVote();
     }
 
     function handleLogout() {
       googleIdToken = null;
+      existingVoteName = null;
       document.getElementById("currentUserId").textContent = "";
       document.getElementById("loggedInPanel").style.display = "none";
       document.getElementById("loggedOutArea").style.display = "flex";
+      updateVotedBadge();
 
       const msgBox = document.getElementById("msgBox");
       msgBox.style.display = "none";
@@ -673,7 +733,6 @@
           const key = item.input.replace(/\s+/g, "").toLowerCase();
           dictMap.set(key, item.normalized);
 
-          // '노예'는 자동완성 드롭다운에서 숨김 (직접 입력 시 dictMap으로 정상 매칭)
           if (key !== HIDDEN_INPUT_KEY) {
             const opt = document.createElement("option");
             opt.value = item.input;
@@ -714,11 +773,18 @@
       const key = val.replace(/\s+/g, "").toLowerCase();
       const preview = document.getElementById("previewTag");
       const btn = document.getElementById("submitBtn");
+      btn.classList.remove("change-mode");
 
       if (!val) {
         preview.textContent = "";
         btn.disabled = true;
-        btn.textContent = googleIdToken ? "갤주 이름을 입력해 주세요" : "로그인 후 투표 가능";
+        if (!googleIdToken) {
+          btn.textContent = "로그인 후 투표 가능";
+        } else if (existingVoteName) {
+          btn.textContent = "변경할 갤주 이름을 입력해 주세요";
+        } else {
+          btn.textContent = "갤주 이름을 입력해 주세요";
+        }
         return;
       }
 
@@ -727,8 +793,17 @@
         preview.className = "preview-tag valid";
         preview.textContent = "✓ 집계 대상: " + norm;
         if (googleIdToken) {
-          btn.disabled = false;
-          btn.textContent = "'" + norm + "'에게 투표하기";
+          if (existingVoteName && existingVoteName === norm) {
+            btn.disabled = true;
+            btn.textContent = "현재 '" + norm + "'에게 투표되어 있습니다";
+          } else if (existingVoteName) {
+            btn.disabled = false;
+            btn.classList.add("change-mode");
+            btn.textContent = "'" + norm + "'(으)로 투표 변경하기";
+          } else {
+            btn.disabled = false;
+            btn.textContent = "'" + norm + "'에게 투표하기";
+          }
         } else {
           btn.disabled = true;
           btn.textContent = "구글 로그인 후 투표 가능";
@@ -749,13 +824,13 @@
 
       const btn = document.getElementById("submitBtn");
       btn.disabled = true;
-      btn.textContent = "투표 전송 중...";
+      btn.textContent = existingVoteName ? "투표 변경 중..." : "투표 전송 중...";
 
       try {
         const res = await fetch(GAS_API_URL, {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ idToken: googleIdToken, rawInput: rawInput })
+          body: JSON.stringify({ action: "vote", idToken: googleIdToken, rawInput: rawInput })
         });
         const result = await res.json();
 
@@ -764,7 +839,11 @@
         if (result.success) {
           msgBox.className = "msg-box msg-ok";
           msgBox.textContent = result.message;
-          btn.textContent = "투표 참여 완료";
+          existingVoteName = result.currentVote || existingVoteName;
+          updateVotedBadge();
+          document.getElementById("galljuInput").value = "";
+          document.getElementById("previewTag").textContent = "";
+          validateInput();
           refreshRanking();
         } else {
           msgBox.className = "msg-box msg-err";
