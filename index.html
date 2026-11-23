@@ -801,10 +801,19 @@
           btn.textContent = "구글 로그인 후 투표 가능";
         }
       } else {
-        preview.className = "preview-tag invalid";
-        preview.textContent = "✕ 별명사전에 등록되지 않은 이름입니다.";
-        btn.disabled = true;
-        btn.textContent = "등록된 이름만 투표 가능";
+        preview.textContent = "";
+        if (googleIdToken) {
+          btn.disabled = false;
+          if (existingVoteName) {
+            btn.classList.add("change-mode");
+            btn.textContent = "'" + val + "'(으)로 투표 변경하기";
+          } else {
+            btn.textContent = "'" + val + "'에게 투표하기";
+          }
+        } else {
+          btn.disabled = true;
+          btn.textContent = "구글 로그인 후 투표 가능";
+        }
       }
     }
 
