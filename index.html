@@ -411,10 +411,11 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 12px;
+      gap: 8px;
     }
 
     .ranking-title {
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 700;
       color: #e2e8f0;
       display: flex;
@@ -430,6 +431,7 @@
       padding: 4px 10px;
       border-radius: 20px;
       font-weight: 700;
+      white-space: nowrap;
     }
 
     .candidate-list {
@@ -457,12 +459,12 @@
 
     .candidate-item .tag-top {
       font-family: 'Rajdhani', sans-serif;
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 700;
       color: var(--accent-gold);
       background: rgba(255, 212, 59, 0.1);
       border: 1px solid rgba(255, 212, 59, 0.3);
-      padding: 2px 7px;
+      padding: 2px 8px;
       border-radius: 4px;
       letter-spacing: 0.5px;
     }
@@ -544,7 +546,7 @@
 
     <div class="ranking-box">
       <div class="ranking-header">
-        <span class="ranking-title">현재 상위 5명 (순서 무작위)</span>
+        <span id="rankingTitle" class="ranking-title">현재 상위 5명 (순서 무작위)</span>
         <span id="totalCount" class="total-badge">총 0표</span>
       </div>
       <ul id="rankingList" class="candidate-list">
@@ -702,15 +704,21 @@
       const banner = document.getElementById("closeBanner");
       banner.style.display = data.isClose ? "block" : "none";
 
+      const isTop15 = Boolean(data.isTop15Mode);
+      const titleEl = document.getElementById("rankingTitle");
+      titleEl.textContent = isTop15
+        ? "오늘 자정까지 중간 공개 · 1~15위 (득표수 비공개)"
+        : "현재 상위 5명 (순서 무작위)";
+
       const listEl = document.getElementById("rankingList");
       if (!data.top5 || data.top5.length === 0) {
         listEl.innerHTML = '<li class="candidate-item">아직 집계된 투표가 없습니다.</li>';
         return;
       }
-      listEl.innerHTML = data.top5.map(name => `
+      listEl.innerHTML = data.top5.map((name, idx) => `
         <li class="candidate-item">
           <span>${name}</span>
-          <span class="tag-top">TOP 5</span>
+          <span class="tag-top">${isTop15 ? (idx + 1) + "위" : "TOP 5"}</span>
         </li>
       `).join("");
     }
