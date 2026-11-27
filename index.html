@@ -469,6 +469,17 @@
       letter-spacing: 0.5px;
     }
 
+    .candidate-item .rank-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .candidate-item .vote-count {
+      color: var(--accent-cyan);
+      font-weight: 900;
+    }
+
     .live-note {
       font-size: 11px;
       color: #64748b;
@@ -704,13 +715,31 @@
       const banner = document.getElementById("closeBanner");
       banner.style.display = data.isClose ? "block" : "none";
 
+      const isOpenTop10 = Boolean(data.isOpenTop10Mode);
       const isTop15 = Boolean(data.isTop15Mode);
       const titleEl = document.getElementById("rankingTitle");
+      const listEl = document.getElementById("rankingList");
+
+      if (isOpenTop10) {
+        titleEl.textContent = "오늘 19:00까지 실시간 TOP 10 공개";
+        const openList = data.openTop10 || [];
+        if (openList.length === 0) {
+          listEl.innerHTML = '<li class="candidate-item">아직 집계된 투표가 없습니다.</li>';
+          return;
+        }
+        listEl.innerHTML = openList.map(item => `
+          <li class="candidate-item">
+            <span class="rank-left"><span class="tag-top">${item.rank}위</span><span>${item.name}</span></span>
+            <span class="vote-count">${Number(item.votes || 0).toLocaleString()}표</span>
+          </li>
+        `).join("");
+        return;
+      }
+
       titleEl.textContent = isTop15
         ? "오늘 자정까지 중간 공개 · 1~15위 (득표수 비공개)"
         : "현재 상위 5명 (순서 무작위)";
 
-      const listEl = document.getElementById("rankingList");
       if (!data.top5 || data.top5.length === 0) {
         listEl.innerHTML = '<li class="candidate-item">아직 집계된 투표가 없습니다.</li>';
         return;
